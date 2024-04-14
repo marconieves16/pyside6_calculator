@@ -101,6 +101,8 @@ class Calculator(QWidget):
         # Delete button connection
         self.button_delete.clicked.connect(lambda:self.delete())
 
+        self.button_negative.clicked.connect(lambda:self.negative())
+
         # Setting the layout
         self.setLayout(grid_layout)
 
@@ -126,15 +128,23 @@ class Calculator(QWidget):
         self.value = 0
         self.update()
     
+    # The delete function will delete the last number entered
     def delete(self):
         if self.value == 0:
-            self.value = 0
+            pass
         elif len(str(self.value)) == 1 or self.value < 0:
             self.value = 0
         else:
             self.value = int(self.value / 10)
         self.update()
-    
+
+    def negative(self):
+        if self.value == 0:
+            pass
+        else:
+            self.value = self.value * (-1)
+        self.update()
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget = Calculator()
