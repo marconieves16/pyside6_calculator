@@ -98,6 +98,9 @@ class Calculator(QWidget):
         #Clear button connection
         self.button_clear.clicked.connect(lambda:self.clear())
 
+        # Delete button connection
+        self.button_delete.clicked.connect(lambda:self.delete())
+
         # Setting the layout
         self.setLayout(grid_layout)
 
@@ -123,13 +126,15 @@ class Calculator(QWidget):
         self.value = 0
         self.update()
     
+    def delete(self):
+        if self.value == 0:
+            self.value = 0
+        elif len(str(self.value)) == 1 or self.value < 0:
+            self.value = 0
+        else:
+            self.value = int(self.value / 10)
+        self.update()
     
-
-
-            
-
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget = Calculator()
