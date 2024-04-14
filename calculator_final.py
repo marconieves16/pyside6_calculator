@@ -13,6 +13,8 @@ class Calculator(QWidget):
 
         # Output tab
         self.value = 0
+        self.dec = False
+        self.after_dec = False
         self.output = QLineEdit(str(self.value))
         self.output.setReadOnly(True)
         self.output.setAlignment(Qt.AlignRight)
@@ -100,9 +102,12 @@ class Calculator(QWidget):
 
         # Delete button connection
         self.button_delete.clicked.connect(lambda:self.delete())
-
+        
+        # Negative button connection
         self.button_negative.clicked.connect(lambda:self.negative())
-
+        
+        # Decimals button connection
+        self.button_decimals.clicked.connect(lambda:self.decimals())
         # Setting the layout
         self.setLayout(grid_layout)
 
@@ -111,12 +116,17 @@ class Calculator(QWidget):
     
     # Typing method will handle the numbers connections 
     def typing(self, num):
-        if self.value == 0:
-            self.value = num
-        elif self.value < 0:
-            self.value = self.value * 10 - num
+        if self.dec == False:
+            if self.value == 0:
+                self.value = num
+            elif self.value < 0:
+                self.value = self.value * 10 - num
+            else:
+                self.value = self.value * 10 + num
+
         else:
-            self.value = self.value * 10 + num
+            self.value = float(str(self.value) + "." + str(num))
+
         self.update()
         
     # The update method will update the output
@@ -138,12 +148,22 @@ class Calculator(QWidget):
             self.value = int(self.value / 10)
         self.update()
 
+    # The negative function alternates the sign of the current value
     def negative(self):
         if self.value == 0:
             pass
         else:
             self.value = self.value * (-1)
         self.update()
+
+    def decimals(self):
+        if self.dec == False and self.after_dec == False:
+            self.after_dec = True
+            self.dec = True
+
+        
+        
+        
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
