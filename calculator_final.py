@@ -16,10 +16,9 @@ class Calculator(QWidget):
         self.output = QLineEdit(str(self.value))
         self.output.setReadOnly(True)
         self.output.setAlignment(Qt.AlignRight)
-        self.output.setText("123")
 
         # Fist Row
-        self.button_clean = QPushButton("CE")
+        self.button_clear = QPushButton("CE")
         self.button_delete = QPushButton("Delete")
         self.button_divide = QPushButton("/")
 
@@ -56,7 +55,7 @@ class Calculator(QWidget):
         grid_layout.addWidget(self.output,0,0,1,4)
 
         # First Row to the Grid
-        grid_layout.addWidget(self.button_clean,1,0,1,2)
+        grid_layout.addWidget(self.button_clear,1,0,1,2)
         grid_layout.addWidget(self.button_delete,1,2)
         grid_layout.addWidget(self.button_divide,1,3)
 
@@ -84,16 +83,55 @@ class Calculator(QWidget):
         grid_layout.addWidget(self.button_decimals,5,2)
         grid_layout.addWidget(self.button_equal,5,3)
 
+        # Buttons connections 
+        self.button_1.clicked.connect(lambda:self.typing(1))
+        self.button_2.clicked.connect(lambda:self.typing(2))
+        self.button_3.clicked.connect(lambda:self.typing(3))
+        self.button_4.clicked.connect(lambda:self.typing(4))
+        self.button_5.clicked.connect(lambda:self.typing(5))
+        self.button_6.clicked.connect(lambda:self.typing(6))
+        self.button_7.clicked.connect(lambda:self.typing(7))
+        self.button_8.clicked.connect(lambda:self.typing(8))
+        self.button_9.clicked.connect(lambda:self.typing(9))
+        self.button_0.clicked.connect(lambda:self.typing(0))
+
+        #Clear button connection
+        self.button_clear.clicked.connect(lambda:self.clear())
+
         # Setting the layout
         self.setLayout(grid_layout)
 
         # Setting the windows title
         self.setWindowTitle("Calculator")
+    
+    # Typing method will handle the numbers connections 
+    def typing(self, num):
+        if self.value == 0:
+            self.value = num
+        elif self.value < 0:
+            self.value = self.value * 10 - num
+        else:
+            self.value = self.value * 10 + num
+        self.update()
+        
+    # The update method will update the output
+    def update(self):
+        self.output.setText(str(self.value))
+
+    # The clear method will set the current value to 0 and update the output
+    def clear(self):
+        self.value = 0
+        self.update()
+    
+    
 
 
-   
+            
+
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget = Calculator()
     widget.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
