@@ -1,5 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QGridLayout
+from PySide6.QtCore import Qt
 
 class Calculator(QWidget):
 
@@ -11,8 +12,11 @@ class Calculator(QWidget):
     def init_ui(self):
 
         # Output tab
-        self.output = QLineEdit(self)
+        self.value = 0
+        self.output = QLineEdit(str(self.value))
         self.output.setReadOnly(True)
+        self.output.setAlignment(Qt.AlignRight)
+        self.output.setText("123")
 
         # Fist Row
         self.button_clean = QPushButton("CE")
@@ -85,6 +89,8 @@ class Calculator(QWidget):
 
         # Setting the windows title
         self.setWindowTitle("Calculator")
+
+
    
 if __name__ == "__main__":
     app = QApplication(sys.argv)
