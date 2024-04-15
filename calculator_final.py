@@ -12,9 +12,8 @@ class Calculator(QWidget):
     def init_ui(self):
 
         # Output tab
-        self.value = 0
+        self.value = "0"
         self.dec = False
-        self.after_dec = False
         self.output = QLineEdit(str(self.value))
         self.output.setReadOnly(True)
         self.output.setAlignment(Qt.AlignRight)
@@ -116,17 +115,12 @@ class Calculator(QWidget):
     
     # Typing method will handle the numbers connections 
     def typing(self, num):
-        if self.dec == False:
-            if self.value == 0:
-                self.value = num
-            elif self.value < 0:
-                self.value = self.value * 10 - num
-            else:
-                self.value = self.value * 10 + num
-
+        string = str(num)
+        if self.value == "0":
+            self.value = string
         else:
-            self.value = float(str(self.value) + "." + str(num))
-
+            self.value = self.value + string
+       
         self.update()
         
     # The update method will update the output
@@ -135,17 +129,18 @@ class Calculator(QWidget):
 
     # The clear method will set the current value to 0 and update the output
     def clear(self):
-        self.value = 0
+        self.value = "0"
+        self.dec = False
         self.update()
     
     # The delete function will delete the last number entered
     def delete(self):
-        if self.value == 0:
+        if self.value == "0":
             pass
-        elif len(str(self.value)) == 1 or self.value < 0:
-            self.value = 0
+        elif len(self.value) == 1:
+            self.clear()
         else:
-            self.value = int(self.value / 10)
+            self.value = self.value[:-1]
         self.update()
 
     # The negative function alternates the sign of the current value
@@ -157,13 +152,9 @@ class Calculator(QWidget):
         self.update()
 
     def decimals(self):
-        if self.dec == False and self.after_dec == False:
-            self.after_dec = True
-            self.dec = True
-
-        
-        
-        
+        self.dec = True
+        if "." not in self.value:
+            self.value = self.value + "."
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
