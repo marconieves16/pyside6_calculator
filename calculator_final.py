@@ -141,14 +141,19 @@ class Calculator(QWidget):
             self.clear()
         else:
             self.value = self.value[:-1]
+        if self.value == "-":
+            self.clear()
         self.update()
+        
 
     # The negative function alternates the sign of the current value
     def negative(self):
-        if self.value == 0:
+        if self.value == "0":
             pass
+        elif self.value[0] == "-":
+            self.value = self.value[1:]
         else:
-            self.value = self.value * (-1)
+            self.value = "-" + self.value
         self.update()
 
     def decimals(self):
