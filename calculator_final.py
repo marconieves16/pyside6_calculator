@@ -1,7 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QGridLayout
 from PySide6.QtCore import Qt
-import functools
 
 class Calculator(QWidget):
 
@@ -17,6 +16,11 @@ class Calculator(QWidget):
         self.dec = False
         self.previous_value = 0
         self.current_operation = "none"
+
+        # Previous value tab
+        self.secondary_output = QLineEdit(str(self.previous_value))
+        self.secondary_output.setReadOnly(True)
+        self.secondary_output.setAlignment(Qt.AlignRight)
 
         # Output tab
         self.output = QLineEdit(str(self.value))
@@ -57,37 +61,39 @@ class Calculator(QWidget):
 
         # Adding the elements to the grid layout
         
+        # Secondary output label
+        grid_layout.addWidget(self.secondary_output,0,0,1,4)
         # Output label
-        grid_layout.addWidget(self.output,0,0,1,4)
+        grid_layout.addWidget(self.output,1,0,1,4)
 
         # First Row to the Grid
-        grid_layout.addWidget(self.button_clear,1,0,1,2)
-        grid_layout.addWidget(self.button_delete,1,2)
-        grid_layout.addWidget(self.button_divide,1,3)
+        grid_layout.addWidget(self.button_clear,2,0,1,2)
+        grid_layout.addWidget(self.button_delete,2,2)
+        grid_layout.addWidget(self.button_divide,2,3)
 
         # Second Row to the Grid
-        grid_layout.addWidget(self.button_7,2,0)
-        grid_layout.addWidget(self.button_8,2,1)
-        grid_layout.addWidget(self.button_9,2,2)
-        grid_layout.addWidget(self.button_multiply,2,3)
+        grid_layout.addWidget(self.button_7,3,0)
+        grid_layout.addWidget(self.button_8,3,1)
+        grid_layout.addWidget(self.button_9,3,2)
+        grid_layout.addWidget(self.button_multiply,3,3)
 
         # Third Row to the Grid
-        grid_layout.addWidget(self.button_4,3,0)
-        grid_layout.addWidget(self.button_5,3,1)
-        grid_layout.addWidget(self.button_6,3,2)
-        grid_layout.addWidget(self.button_substract,3,3)
+        grid_layout.addWidget(self.button_4,4,0)
+        grid_layout.addWidget(self.button_5,4,1)
+        grid_layout.addWidget(self.button_6,4,2)
+        grid_layout.addWidget(self.button_substract,4,3)
 
         # Fourth Row to the Grid
-        grid_layout.addWidget(self.button_1,4,0)
-        grid_layout.addWidget(self.button_2,4,1)
-        grid_layout.addWidget(self.button_3,4,2)
-        grid_layout.addWidget(self.button_adition,4,3)
+        grid_layout.addWidget(self.button_1,5,0)
+        grid_layout.addWidget(self.button_2,5,1)
+        grid_layout.addWidget(self.button_3,5,2)
+        grid_layout.addWidget(self.button_adition,5,3)
 
         # Fifth Row to the Grid
-        grid_layout.addWidget(self.button_negative,5,0)
-        grid_layout.addWidget(self.button_0,5,1)
-        grid_layout.addWidget(self.button_decimals,5,2)
-        grid_layout.addWidget(self.button_equal,5,3)
+        grid_layout.addWidget(self.button_negative,6,0)
+        grid_layout.addWidget(self.button_0,6,1)
+        grid_layout.addWidget(self.button_decimals,6,2)
+        grid_layout.addWidget(self.button_equal,6,3)
 
         # Buttons connections 
         self.button_2.clicked.connect(lambda:self.typing(2))
@@ -186,7 +192,7 @@ class Calculator(QWidget):
     def math_operation(func):
         def wrapper(self):
             if self.current_operation == "none":
-                pass
+                self.previous_value = float(self.value)
             elif self.current_operation == "adition":
                 self.previous_value = self.previous_value + (float(self.value))
             elif self.current_operation == "substract":
