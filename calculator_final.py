@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QGridLayout
 from PySide6.QtCore import Qt
-from operator import __
+import functools
 
 class Calculator(QWidget):
 
@@ -9,14 +9,16 @@ class Calculator(QWidget):
 
         super().__init__()
         self.init_ui()
+        
 
     def init_ui(self):
-
-        # Output tab
+        # Variables
         self.value = "0"
         self.dec = False
         self.previous_value = 0
-        self.current_operation == "none"
+        self.current_operation = "none"
+
+        # Output tab
         self.output = QLineEdit(str(self.value))
         self.output.setReadOnly(True)
         self.output.setAlignment(Qt.AlignRight)
@@ -118,7 +120,7 @@ class Calculator(QWidget):
         self.button_substract.clicked.connect(lambda:self.substract())
 
         # Multiply button connection
-        self.button_multiply.clicked.connnect(lambda:self.multiply())
+        self.button_multiply.clicked.connect(lambda:self.multiply())
 
         # Divide button connection
         self.button_divide.clicked.connect(lambda:self.divide())
@@ -180,22 +182,9 @@ class Calculator(QWidget):
         if "." not in self.value:
             self.value = self.value + "."
 
-    # The value storage decorator saves the current value before executing math operations
-    def value_storage(self, func):
-        def wrapper(*args, **kwargs):
-            if "." in self.value:
-                self.previous_value = float(self.value)
-            else: 
-                self.previous_value = int(self.value)
-            self.clear()
-
-            result = func(*args, **kwargs)
-            return result
-        return wrapper
-    
     # The math operation decorator i dont know what it will do yet
-    def math_operation(self, func):
-        def wrapper(*args, **kwargs):
+    def math_operation(func):
+        def wrapper(self):
             if self.current_operation == "none":
                 pass
             elif self.current_operation == "adition":
@@ -206,9 +195,18 @@ class Calculator(QWidget):
                 self.previous_value = self.previous_value * float(self.value)
             else:
                 self.previous_value = self.previous_value / float(self.value)
-
-            result = func(*args, **kwargs)
-            return result
+            func(self)
+        return wrapper
+    
+    # The value storage decorator saves the current value before executing math operations
+    def value_storage(func):
+        def wrapper(self):
+            if "." in self.value:
+                self.previous_value = float(self.value)
+            else: 
+                self.previous_value = int(self.value)
+            self.clear()
+            func(self)
         return wrapper
     
     @math_operation
