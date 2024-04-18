@@ -235,7 +235,26 @@ class Calculator(QWidget):
         self.current_operation = "divide"
 
     def equal(self):
-        pass
+        if self.current_operation == "none":
+            pass
+        elif self.current_operation == "adition":
+            self.previous_value = str(float(self.previous_value) + float(self.value))
+        elif self.current_operation == "substract":
+            self.previous_value = str(float(self.previous_value) - float(self.value))
+        elif self.current_operation == "multiply":
+            self.previous_value = str(float(self.previous_value) * float(self.value))
+        else:
+            try:
+                self.previous_value = str(float(self.previous_value) / float(self.value))
+            except ZeroDivisionError:
+                self.timer.setSingleShot(True)
+                self.timer.timeout.connect(lambda:self.output.setText(self.value))
+                self.timer.start(3000)
+                self.output.setText("Zero Error Divison")
+        if self.current_operation == "none":
+            self.update(False)
+        else:
+            self.update(True)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
