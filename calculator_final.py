@@ -1,20 +1,22 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QGridLayout
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 
 class Calculator(QWidget):
+
 
     def __init__(self):
 
         super().__init__()
         self.init_ui()
-        
+
     def init_ui(self):
         # Variables
         self.value = "0"
         self.previous_value = "0"
         self.dec = False
         self.current_operation = "none"
+        self.timer = QTimer()
 
         # Previous value tab
         self.secondary_output = QLineEdit(str(self.previous_value))
@@ -60,22 +62,22 @@ class Calculator(QWidget):
         grid_layout = QGridLayout()
 
         # Adding the elements to the grid layout
-        
+
         # Secondary output label
-        grid_layout.addWidget(self.secondary_output,0,0,1,4)
+        grid_layout.addWidget(self.secondary_output, 0, 0, 1, 4)
         # Output label
-        grid_layout.addWidget(self.output,1,0,1,4)
+        grid_layout.addWidget(self.output, 1, 0, 1, 4)
 
         # First Row to the Grid
-        grid_layout.addWidget(self.button_clear,2,0,1,2)
-        grid_layout.addWidget(self.button_delete,2,2)
-        grid_layout.addWidget(self.button_divide,2,3)
+        grid_layout.addWidget(self.button_clear, 2, 0, 1, 2)
+        grid_layout.addWidget(self.button_delete, 2, 2)
+        grid_layout.addWidget(self.button_divide, 2, 3)
 
         # Second Row to the Grid
-        grid_layout.addWidget(self.button_7,3,0)
-        grid_layout.addWidget(self.button_8,3,1)
-        grid_layout.addWidget(self.button_9,3,2)
-        grid_layout.addWidget(self.button_multiply,3,3)
+        grid_layout.addWidget(self.button_7, 3, 0)
+        grid_layout.addWidget(self.button_8, 3, 1)
+        grid_layout.addWidget(self.button_9, 3, 2)
+        grid_layout.addWidget(self.button_multiply, 3, 3)
 
         # Third Row to the Grid
         grid_layout.addWidget(self.button_4,4,0)
@@ -108,7 +110,7 @@ class Calculator(QWidget):
         self.button_0.clicked.connect(lambda:self.typing(0))
 
         #Clear button connection
-        self.button_clear.clicked.connect(lambda:self.clear())
+        self.button_clear.clicked.connect(lambda:self.clear(True))
 
         # Delete button connection
         self.button_delete.clicked.connect(lambda:self.delete())
@@ -138,7 +140,7 @@ class Calculator(QWidget):
         self.setLayout(grid_layout)
 
         # Setting the windows title
-        self.setWindowTitle("Calculator")
+        self.setWindowTitle("Nigga´s in Paris")
     
     # Typing method will handle the numbers connections 
     def typing(self, num):
@@ -157,10 +159,12 @@ class Calculator(QWidget):
         
 
     # The clear method will set the current value to 0 and update the output
-    def clear(self):
+    def clear(self, secondary_update):
         self.value = "0"
-        self.previous_value = "0"
+        if secondary_update == True: 
+            self.previous_value = "0"
         self.dec = False
+        self.current_operation = 'none'
         self.update(True)
     
     # The delete function will delete the last number entered
@@ -168,11 +172,11 @@ class Calculator(QWidget):
         if self.value == "0":
             pass
         elif len(self.value) == 1:
-            self.clear()
+            self.clear(False)
         else:
             self.value = self.value[:-1]
         if self.value == "-":
-            self.clear()
+            self.clear(False)
         self.update(False)
         
     # The negative function alternates the sign of the current value
@@ -196,16 +200,21 @@ class Calculator(QWidget):
         def wrapper(self):
             if self.current_operation == "none":
                 self.previous_value = self.value
-                self.value = "0"
             elif self.current_operation == "adition":
                 self.previous_value = str(float(self.previous_value) + float(self.value))
-                self.value = "0"
             elif self.current_operation == "substract":
                 self.previous_value = str(float(self.previous_value) - float(self.value))
             elif self.current_operation == "multiply":
                 self.previous_value = str(float(self.previous_value) * float(self.value))
             else:
-                self.previous_value = str(float(self.previous_value) / float(self.value))
+                try:
+                    self.previous_value = str(float(self.previous_value) / float(self.value))
+                except ZeroDivisionError:
+                    self.timer.setSingleShot(True)
+                    self.timer.timeout.connect(lambda:self.output.setText(self.value))
+                    self.timer.start(3000)
+                    self.output.setText("Zero Error Divison")
+            self.value = "0"
             self.update(True)
             func(self)
         return wrapper
