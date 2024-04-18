@@ -196,9 +196,10 @@ class Calculator(QWidget):
         def wrapper(self):
             if self.current_operation == "none":
                 self.previous_value = self.value
-                self.value = 0
+                self.value = "0"
             elif self.current_operation == "adition":
-                self.previous_value = str(float(self.previous_value) + (float(self.value)))
+                self.previous_value = str(float(self.previous_value) + float(self.value))
+                self.value = "0"
             elif self.current_operation == "substract":
                 self.previous_value = str(float(self.previous_value) - float(self.value))
             elif self.current_operation == "multiply":
@@ -212,15 +213,17 @@ class Calculator(QWidget):
     @math_operation
     def adition(self):
         self.current_operation = "adition"
-        
+    @math_operation
     def substract(self):
-        pass
+        self.current_operation = "substract"
 
+    @math_operation
     def multiply(self):
-        pass
+        self.current_operation = "multiply"
 
+    @math_operation
     def divide(self):
-        pass
+        self.current_operation = "divide"
 
     def equal(self):
         pass
