@@ -9,18 +9,18 @@ class Calculator(QWidget):
         super().__init__()
         self.init_ui()
         
-
     def init_ui(self):
         # Variables
         self.value = "0"
+        self.previous_value = "0"
         self.dec = False
-        self.previous_value = 0
         self.current_operation = "none"
 
         # Previous value tab
         self.secondary_output = QLineEdit(str(self.previous_value))
         self.secondary_output.setReadOnly(True)
         self.secondary_output.setAlignment(Qt.AlignRight)
+        #self.secondary_output.setVisible(False)
 
         # Output tab
         self.output = QLineEdit(str(self.value))
@@ -96,9 +96,9 @@ class Calculator(QWidget):
         grid_layout.addWidget(self.button_equal,6,3)
 
         # Buttons connections 
+        self.button_1.clicked.connect(lambda:self.typing(1))
         self.button_2.clicked.connect(lambda:self.typing(2))
         self.button_3.clicked.connect(lambda:self.typing(3))
-        self.button_1.clicked.connect(lambda:self.typing(1))
         self.button_4.clicked.connect(lambda:self.typing(4))
         self.button_5.clicked.connect(lambda:self.typing(5))
         self.button_6.clicked.connect(lambda:self.typing(6))
@@ -147,18 +147,21 @@ class Calculator(QWidget):
             self.value = string
         else:
             self.value = self.value + string
-       
-        self.update()
+        self.update(False)
         
     # The update method will update the output
-    def update(self):
+    def update(self, secondary_update):
+        if secondary_update == True:
+            self.secondary_output.setText(self.previous_value)
         self.output.setText(str(self.value))
+        
 
     # The clear method will set the current value to 0 and update the output
     def clear(self):
         self.value = "0"
+        self.previous_value = "0"
         self.dec = False
-        self.update()
+        self.update(True)
     
     # The delete function will delete the last number entered
     def delete(self):
@@ -170,7 +173,7 @@ class Calculator(QWidget):
             self.value = self.value[:-1]
         if self.value == "-":
             self.clear()
-        self.update()
+        self.update(False)
         
     # The negative function alternates the sign of the current value
     def negative(self):
@@ -180,7 +183,7 @@ class Calculator(QWidget):
             self.value = self.value[1:]
         else:
             self.value = "-" + self.value
-        self.update()
+        self.update(False)
 
     # The decimal function creates a dot that indicates the beginning of a float value
     def decimals(self):
@@ -192,35 +195,24 @@ class Calculator(QWidget):
     def math_operation(func):
         def wrapper(self):
             if self.current_operation == "none":
-                self.previous_value = float(self.value)
+                self.previous_value = self.value
+                self.value = 0
             elif self.current_operation == "adition":
-                self.previous_value = self.previous_value + (float(self.value))
+                self.previous_value = str(float(self.previous_value) + (float(self.value)))
             elif self.current_operation == "substract":
-                self.previous_value = self.previous_value - float(self.value)
+                self.previous_value = str(float(self.previous_value) - float(self.value))
             elif self.current_operation == "multiply":
-                self.previous_value = self.previous_value * float(self.value)
+                self.previous_value = str(float(self.previous_value) * float(self.value))
             else:
-                self.previous_value = self.previous_value / float(self.value)
+                self.previous_value = str(float(self.previous_value) / float(self.value))
+            self.update(True)
             func(self)
         return wrapper
-    
-    # The value storage decorator saves the current value before executing math operations
-    def value_storage(func):
-        def wrapper(self):
-            if "." in self.value:
-                self.previous_value = float(self.value)
-            else: 
-                self.previous_value = int(self.value)
-            self.clear()
-            func(self)
-        return wrapper
-    
+
     @math_operation
-    @value_storage
     def adition(self):
         self.current_operation = "adition"
         
-
     def substract(self):
         pass
 
