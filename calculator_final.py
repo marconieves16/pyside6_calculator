@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QGridLayout
+from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QGridLayout, QSizePolicy, QHBoxLayout, QVBoxLayout
 from PySide6.QtCore import Qt, QTimer
 
 class Calculator(QWidget):
@@ -23,6 +23,11 @@ class Calculator(QWidget):
         self.secondary_output.setReadOnly(True)
         self.secondary_output.setAlignment(Qt.AlignRight)
         #self.secondary_output.setVisible(False)
+
+        # Operation output tab
+        self.operation_output = QLineEdit()
+        self.operation_output.setReadOnly(True)
+        self.operation_output.setAlignment(Qt.AlignRight)
 
         # Output tab
         self.output = QLineEdit(str(self.value))
@@ -58,13 +63,24 @@ class Calculator(QWidget):
         self.button_decimals = QPushButton(".")
         self.button_equal = QPushButton("=")
 
+        # Top horizontal box layout
+        h_layout = QHBoxLayout()
+
+        # Adding elements to the top horizontal layout
+        h_layout.addWidget(self.secondary_output)
+        h_layout.addWidget(self.operation_output)
+
         # Set up the grid layout
         grid_layout = QGridLayout()
 
         # Adding the elements to the grid layout
 
         # Secondary output label
-        grid_layout.addWidget(self.secondary_output, 0, 0, 1, 4)
+        #grid_layout.addWidget(self.secondary_output, 0, 0, 1, 3)
+
+        # Operation output label
+        #grid_layout.addWidget(self.operation_output, 0, 3, 1, 1)
+
         # Output label
         grid_layout.addWidget(self.output, 1, 0, 1, 4)
 
@@ -136,11 +152,23 @@ class Calculator(QWidget):
         # Equal button connection
         self.button_equal.clicked.connect(lambda:self.equal())
 
+        # Size Policy for elements
+        #self.secondary_output.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed, 5))
+        #self.operation_output.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed, 1))
+        h_layout.setStretchFactor(self.secondary_output, 12)
+        h_layout.setStretchFactor(self.operation_output, 1)
+
+
+        # Setting the main vertical layout
+        v_layout = QVBoxLayout()
+        v_layout.addLayout(h_layout)
+        v_layout.addLayout(grid_layout)
+
         # Setting the layout
-        self.setLayout(grid_layout)
+        self.setLayout(v_layout)
 
         # Setting the windows title
-        self.setWindowTitle("Nigga´s in Paris")
+        self.setWindowTitle("Calculator")
     
     # Typing method will handle the numbers connections 
     def typing(self, num):
