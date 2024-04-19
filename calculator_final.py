@@ -17,6 +17,12 @@ class Calculator(QWidget):
         self.dec = False
         self.current_operation = "none"
         self.timer = QTimer()
+        self.operation_dictionary = {
+            "adition": "+",
+            "substract": "-",
+            "multiply": "x",
+            "divide": "/"
+        }
 
         # Previous value tab
         self.secondary_output = QLineEdit(str(self.previous_value))
@@ -227,6 +233,7 @@ class Calculator(QWidget):
     def math_operation(func):
         def wrapper(self):
             if self.current_operation == "none":
+                self.operation_output.setText("")
                 self.previous_value = self.value
             elif self.current_operation == "adition":
                 self.previous_value = str(float(self.previous_value) + float(self.value))
@@ -245,7 +252,9 @@ class Calculator(QWidget):
             self.value = "0"
             self.update(True)
             func(self)
+            self.operation_output.setText(self.operation_dictionary[self.current_operation])
         return wrapper
+
 
     @math_operation
     def adition(self):
